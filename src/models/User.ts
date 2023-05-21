@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import { IUser } from '../types/interface';
 
 const UserSchema = new mongoose.Schema(
 	{
-		fullName: {
+		name: {
 			type: String,
 			required: true,
 		},
@@ -21,4 +22,4 @@ const UserSchema = new mongoose.Schema(
 	},
 );
 
-export default mongoose.model('User', UserSchema);
+export default mongoose.model<IUser>('User', UserSchema);

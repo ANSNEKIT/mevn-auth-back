@@ -3,6 +3,10 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 
+import userRouter from './routers/user';
+import { errorHandler } from './middlewares/common/errorsHandler';
+import { notFound } from './middlewares/common/errorNotFound';
+
 mongoose
 	.connect('mongodb+srv://bdmernauth:TfB6k0mXUqWXGlVN@cluster0.2an7hii.mongodb.net/')
 	.then(() => console.log('DB ok'))
@@ -13,6 +17,9 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-// app.use('/users');
+app.use('/', userRouter);
+app.use(errorHandler);
+app.use(notFound);
+
 const port = Number(process.env.PORT) || 4444;
-app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(port, () => console.log(`Сервер запущен. Прослушиваю порт ${port}`));
