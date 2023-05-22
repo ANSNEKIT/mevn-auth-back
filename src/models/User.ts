@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		tokens: {
+			type: Array,
+			required: true,
+		},
 	},
 	{
 		timestamps: true,

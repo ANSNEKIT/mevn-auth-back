@@ -7,6 +7,12 @@ export interface IUser extends DocumentResult<IUser> {
 	passwordHash: string;
 	email: string;
 	name: string;
+	tokens: IToken[];
+}
+
+export interface IToken {
+	token: string;
+	signedAt: string;
 }
 
 export interface IEventModel extends IUser, Document {}

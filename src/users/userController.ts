@@ -32,13 +32,14 @@ const register = async (
 			{
 				_id: user._id,
 			},
-			process.env.SECRET || 'secret123',
+			process.env.JWT_SECRET || 'secret123',
 			{
 				expiresIn: '2h',
 			},
 		);
 
-		res.json({
+		await res.json({
+			success: true,
 			token,
 		});
 	} catch (err) {
@@ -69,13 +70,29 @@ const login = async (
 			{
 				_id: user._id,
 			},
-			process.env.SECRET || 'secret123',
+			process.env.JWT_SECRET || 'secret123',
 			{
 				expiresIn: '2h',
 			},
 		);
 
-		res.json({ token });
+		let oldTokens = user.tokens || [];
+
+		if (oldTokens.length) {
+			oldTokens = oldTokens.filter((t) => {
+				const timeDiff = (Date.now() - parseInt(t.signedAt)) / 1000;
+				const TWO_HOURS_SECONDS = 7200;
+				if (timeDiff < TWO_HOURS_SECONDS) {
+					return t;
+				}
+			});
+		}
+
+		await UserModel.findByIdAndUpdate(user._id, {
+			tokens: [...oldTokens, { token, signedAt: Date.now().toString() }],
+		});
+
+		res.json({ success: true, token });
 	} catch (err) {
 		console.log(err);
 		return next(new HTTPError(500, 'Не удалось авторизоваться'));
@@ -96,11 +113,37 @@ const info = async (
 
 		const { email, name } = user._doc;
 
-		res.json({ login: email, name });
+		res.json({ success: true, login: email, name });
 	} catch (err) {
 		console.log(err);
 		return next(new HTTPError(500, 'Нет доступа'));
 	}
 };
 
-export { register, login, info };
+const logout = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+): Promise<void | NextFunction> => {
+	try {
+		const token = (req.headers?.authorization || '').replace(/Bearer\s?/, '');
+		const isAllTokens = req.query.all || false;
+		const user = await UserModel.findById(req.userId);
+
+		if (!user) {
+			return next(new HTTPError(404, 'Пользователь не найден'));
+		}
+
+		const userTokens = user.tokens;
+		const newTokens = userTokens.filter((t) => t.token !== token);
+
+		await UserModel.findByIdAndUpdate(user._id, { tokens: isAllTokens ? [] : newTokens });
+
+		res.json({ success: true, message: 'Успешно разлогинен!' });
+	} catch (err) {
+		console.log(err);
+		return next(new HTTPError(500, 'Ошибка при попытке разлогиниться'));
+	}
+};
+
+export { register, login, info, logout };
