@@ -17,7 +17,7 @@ export const checkAuth = (req: Request, res: Response, next: NextFunction): void
 			return next();
 		} catch (err: unknown) {
 			console.log(err);
-			return next(new HTTPError(403, 'Нет доступа'));
+			return next(new HTTPError(403, 'Неверный токен'));
 		}
 	} else {
 		return next(new HTTPError(403, 'Нет доступа'));
