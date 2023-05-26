@@ -31,7 +31,7 @@ Response: Получаем токен пользователя
 
 ### Авторизация
 
-POST /signup
+POST /signin
 body {
     email,
     password
