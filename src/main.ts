@@ -1,12 +1,12 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 
 import userRouter from './routers/user';
+import commonRouter from './routers/common';
 import { errorHandler } from './middlewares/common/errorsHandler';
 import { notFound } from './middlewares/common/errorNotFound';
-import { HTTPError } from './types/HttpErrors';
 
 mongoose
 	.connect('mongodb+srv://bdmernauth:TfB6k0mXUqWXGlVN@cluster0.2an7hii.mongodb.net/')
@@ -23,14 +23,7 @@ const corsOptions = {
 
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use('/ping', (req: Request, res: Response, next: NextFunction): void => {
-	try {
-		res.status(200).send({ status: 'OK' });
-	} catch (error) {
-		console.log(error);
-		return next(new HTTPError(500, 'Ошибка при запросе пинга'));
-	}
-});
+app.use('/ping', commonRouter);
 app.use('/', userRouter);
 app.use(errorHandler);
 app.use(notFound);

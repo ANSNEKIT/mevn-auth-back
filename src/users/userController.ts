@@ -5,6 +5,27 @@ import { NextFunction, Request, Response } from 'express';
 import UserModel from '../models/User';
 import { HTTPError } from '../types/HttpErrors';
 import { UserRegisterDto } from './dto/UserRegister.dto';
+import { IUser } from '../types/interface';
+
+const getUsers = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+): Promise<void | NextFunction> => {
+	try {
+		const usersBD = await UserModel.find({});
+		const users: IUser[] = usersBD.map((user, index) => ({
+			id: index,
+			email: user.email,
+			name: user.name,
+			createdAt: user.createdAt,
+		}));
+		res.status(200).json({ users });
+	} catch (error) {
+		console.log(error);
+		return next(new HTTPError(500, 'Не удалось получить список пользователей'));
+	}
+};
 
 const register = async (
 	{ body }: Request<Record<string, unknown>, Record<string, unknown>, UserRegisterDto>,
@@ -146,4 +167,4 @@ const logout = async (
 	}
 };
 
-export { register, login, info, logout };
+export { register, login, info, logout, getUsers };

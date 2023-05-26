@@ -2,12 +2,20 @@ export interface DocumentResult<T> {
 	_doc: T;
 }
 
-export interface IUser extends DocumentResult<IUser> {
+export interface IUserBD extends DocumentResult<IUserBD> {
 	_id: any;
 	passwordHash: string;
 	email: string;
 	name: string;
 	tokens: IToken[];
+	createdAt: Date;
+}
+
+export interface IUser {
+	id: number;
+	email: string;
+	name: string;
+	createdAt: Date;
 }
 
 export interface IToken {
@@ -15,7 +23,7 @@ export interface IToken {
 	signedAt: string;
 }
 
-export interface IEventModel extends IUser, Document {}
+export interface IEventModel extends IUserBD, Document {}
 
 export interface TokenInterface {
 	_id: string;
