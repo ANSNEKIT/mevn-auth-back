@@ -1,3 +1,4 @@
+<!-- prettier-ignore -->
 # Node.js + Express.js + Typescript + Mongoose
 
 Cтек (Node.js + Express.js + Typescript + Mongoose)
@@ -13,6 +14,59 @@ Cтек (Node.js + Express.js + Typescript + Mongoose)
 
 ---
 
+## API
+
+АПИ доступен по ссылке https://mevn-auth-back.onrender.com
+
+### Регистрация
+
+POST /signup
+body {
+    email,
+    name,
+    password
+}
+
+Response: Получаем токен пользователя
+
+### Авторизация
+
+POST /signup
+body {
+    email,
+    password
+}
+
+Response: Получаем токен пользователя
+
+### Инфо
+
+GET /info
+HEADER: authorization: Bearer <token>
+
+Response: Получаем имя, логин, email пользователя
+
+### Логаут
+
+GET /logout
+HEADER: authorization: Bearer <token>
+
+Response: Получаем статус 200
+
+### Список пользователей
+
+POST /users
+HEADER: authorization: Bearer <token>
+
+Response: Получаем список пользователей
+
+### Пинг
+
+GET /ping
+
+Response: Получаем статус 200
+
+---
 ## Запуск и сборка проекта
 
 ### Установка зависимостей
